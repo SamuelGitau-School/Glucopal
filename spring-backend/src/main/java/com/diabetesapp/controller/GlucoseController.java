@@ -14,12 +14,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users/{userId}/glucose")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 public class GlucoseController {
 
     private final GlucoseService glucoseService;
 
-    /**Log a new reading */
+    /** Log a new reading */
     @PostMapping
     public ResponseEntity<GlucoseRecordDto.Response> addReading(
             @PathVariable Long userId,
@@ -27,7 +26,7 @@ public class GlucoseController {
         return ResponseEntity.ok(glucoseService.addReading(userId, request));
     }
 
-    /**List all readings */
+    /** List all readings */
     @GetMapping
     public ResponseEntity<List<GlucoseRecordDto.Response>> getReadings(
             @PathVariable Long userId,
@@ -42,7 +41,7 @@ public class GlucoseController {
         return ResponseEntity.ok(glucoseService.getAllReadings(userId));
     }
 
-    /**Dashboard Summary */
+    /** Dashboard Summary */
     @GetMapping("/stats")
     public ResponseEntity<GlucoseRecordDto.Stats> getStats(
             @PathVariable Long userId,
@@ -51,7 +50,7 @@ public class GlucoseController {
         return ResponseEntity.ok(glucoseService.getStats(userId, targetLow, targetHigh));
     }
 
-    /**DELETE */
+    /** DELETE */
     @DeleteMapping("/{recordId}")
     public ResponseEntity<Void> deleteReading(
             @PathVariable Long userId,
