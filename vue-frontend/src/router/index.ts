@@ -6,8 +6,8 @@ import Books from '../views/Books.vue'
 import TestingRecords from '../views/TestingRecords.vue'
 import Profile from '../views/Profile.vue'
 import LandingView from '../views/LandingView.vue'
-import LoginView   from '@/views/LoginView.vue'
-import SignupView  from '@/views/SignupView.vue'
+import LoginView   from '../views/LoginView.vue'
+import SignupView  from '../views/SignupView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
