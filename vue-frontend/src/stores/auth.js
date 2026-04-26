@@ -1,15 +1,14 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import axios from '@/lib/axios'
-import type {User} from '@/stores/user'
 
 export const useAuthStore = defineStore('auth', () => {
 
 
-  const accessToken = ref<string | null>(null)
-  const user = ref<User | null>(null)
+  const accessToken = ref(null)
+  const user = ref(null)
   const mfaPending = ref(false)
-  const mfaSessionToken = ref<string | null>(null)
+  const mfaSessionToken = ref(null)
   const isAuthenticated = computed(() => !!accessToken.value && !mfaPending.value)
   const requiresMfa = computed(() => mfaPending.value)
 
@@ -24,7 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function login(credentials: { email: string; password: string }) {
+  async function login(credentials){
     const { data } = await axios.post('/auth/login', credentials)
 
     if (data.mfaRequired) {
@@ -37,7 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
     return { mfaRequired: false }
   }
 
-  async function verifyMfa(code: string) {
+  async function verifyMfa(code) {
     const { data } = await axios.post('/auth/mfa/verify', {
       code,
       mfaSessionToken: mfaSessionToken.value,
@@ -48,7 +47,7 @@ export const useAuthStore = defineStore('auth', () => {
     mfaSessionToken.value = null
   }
 
-  async function handleOAuthCallback(code: string, provider: string) {
+  async function handleOAuthCallback(code, provider) {
     const { data } = await axios.post('/auth/oauth/callback', { code, provider })
 
     if (data.mfaRequired) {
@@ -63,7 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
 
-  function redirectToOAuth(provider: 'google' | string) {
+  function redirectToOAuth(provider) {
     window.location.href = `${import.meta.env.VITE_API_URL}/oauth2/authorization/${provider}`
   }
 
@@ -77,7 +76,7 @@ export const useAuthStore = defineStore('auth', () => {
     window.location.href = `${import.meta.env.VITE_API_URL}/saml2/authenticate/default`
   }
 
-  async function refreshToken(): Promise<string> {
+  async function refreshToken(){
     const { data } = await axios.post('/auth/refresh')
     accessToken.value = data.accessToken
     user.value = data.user

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "glucose_records")
@@ -17,9 +18,9 @@ public class GlucoseRecord {
     private Long id;
 
     @NotNull
-    @Min(value = 10, message = "Glucose value must be at least 10 mg/dL")
-    @Max(value = 600, message = "Glucose value must be at most 600 mg/dL")
-    private Integer value;
+    @DecimalMin(value = 10, message = "Glucose value must be at least 10 mg/dL")
+    @DecimalMax(value = 600, message = "Glucose value must be at most 600 mg/dL")
+    private BigDecimal value;
 
     @NotNull
     private LocalDateTime recordedAt;
@@ -38,7 +39,6 @@ public class GlucoseRecord {
         FASTING, BEFORE_MEAL, AFTER_MEAL
     }
 
-    /**Derived status based on clinical thresholds */
     @Transient
     public GlucoseStatus getStatus() {
         if (value < 70) return GlucoseStatus.LOW;
