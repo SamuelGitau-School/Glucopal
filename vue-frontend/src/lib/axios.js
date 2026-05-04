@@ -15,7 +15,7 @@ instance.interceptors.request.use(config => {
   return config
 })
 
-let refreshing: Promise<string> | null = null
+let refreshing = null
 
 instance.interceptors.response.use(null, async error => {
   const auth = useAuthStore()
