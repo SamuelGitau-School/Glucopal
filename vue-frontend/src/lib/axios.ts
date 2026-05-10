@@ -3,7 +3,6 @@ import type { AxiosError, InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import router from '@/router'
 
-
 interface RetryableRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean
 }
@@ -27,21 +26,28 @@ instance.interceptors.response.use(null, async (error: AxiosError) => {
   const auth = useAuthStore()
   const config = error.config as RetryableRequestConfig
 
-  if (error.response?.status === 401 && !config._retry) {
-    config._retry = true
-    if (!refreshing) {
-      refreshing = auth.refreshToken().finally(() => {
-        refreshing = null
-      })
-    }
-    const newToken = await refreshing
-    config.headers!.Authorization = `Bearer ${newToken}`
-    return instance(config)
-  }
+  const isAuthEndpoint =
+    config?.url?.includes('/auth/refresh') ||
+    config?.url?.includes('/auth/login') ||
+    config?.url?.includes('/auth/signup')
 
-  if (error.response?.status === 401) {
-    await auth.logout()
-    router.push('/login')
+  if (error.response?.status === 401 && !config?._retry && !isAuthEndpoint) {
+    config._retry = true
+
+    try {
+      if (!refreshing) {
+        refreshing = auth.refreshToken().finally(() => {
+          refreshing = null
+        })
+      }
+      const newToken = await refreshing
+      config.headers!.Authorization = `Bearer ${newToken}`
+      return instance(config)
+    } catch {
+      await auth.logout()
+      router.push('/login')
+      return Promise.reject(error)
+    }
   }
 
   return Promise.reject(error)

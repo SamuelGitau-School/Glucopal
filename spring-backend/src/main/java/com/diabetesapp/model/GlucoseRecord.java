@@ -18,8 +18,8 @@ public class GlucoseRecord {
     private Long id;
 
     @NotNull
-    @Min(value = 10, message = "Glucose value must be at least 10 mg/dL")
-    @Max(value = 600, message = "Glucose value must be at most 600 mg/dL")
+    @DecimalMin(value = "10.0", message = "Glucose value must be at least 10 mg/dL")
+    @DecimalMax(value = "600.0", message = "Glucose value must be at most 600 mg/dL")
     private BigDecimal value;
 
     @NotNull
@@ -41,8 +41,8 @@ public class GlucoseRecord {
 
     @Transient
     public GlucoseStatus getStatus() {
-        if (value < 70) return GlucoseStatus.LOW;
-        if (value <= 140) return GlucoseStatus.NORMAL;
+        if (value.compareTo(BigDecimal.valueOf(70)) < 0) return GlucoseStatus.LOW;
+        if (value.compareTo(BigDecimal.valueOf(140)) <= 0 ) return GlucoseStatus.NORMAL;
         return GlucoseStatus.HIGH;
     }
 

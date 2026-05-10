@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +21,6 @@ public class GlucoseService {
     private final GlucoseRecordRepository glucoseRepo;
     private final UserRepository userRepo;
 
-    /**Create a new glucose reading for the User */
     @Transactional
     public GlucoseRecordDto.Response addReading(Long userId, GlucoseRecordDto.Request req) {
         User user = userRepo.findById(userId)
@@ -36,7 +36,6 @@ public class GlucoseService {
         return GlucoseRecordDto.Response.from(glucoseRepo.save(record));
     }
 
-    /**All readings for a User, newest first */
     @Transactional(readOnly = true)
     public List<GlucoseRecordDto.Response> getAllReadings(Long userId) {
         return glucoseRepo.findByUserIdOrderByRecordedAtDesc(userId)
@@ -45,19 +44,18 @@ public class GlucoseService {
                 .collect(Collectors.toList());
     }
 
-    /**Readings within a date range */
     @Transactional(readOnly = true)
-    public List<GlucoseRecordDto.Response> getReadingsInRange(Long userId,
-                                                               LocalDateTime from,
-                                                               LocalDateTime to) {
+    public List<GlucoseRecordDto.Response> getReadingsInRange(
+        Long userId,
+        LocalDateTime from,
+        LocalDateTime to) {
         return glucoseRepo
-                .findByUserIdAndRecordedAtBetweenOrderByRecordedAtDesc(userId, from, to)
-                .stream()
-                .map(GlucoseRecordDto.Response::from)
-                .collect(Collectors.toList());
+            .findByUserIdAndRecordedAtBetweenOrderByRecordedAtDesc(userId, from, to)
+            .stream()
+            .map(GlucoseRecordDto.Response::from)
+            .collect(Collectors.toList());
     }
 
-    /**Delete a specific reading*/
     @Transactional
     public void deleteReading(Long userId, Long recordId) {
         GlucoseRecord record = glucoseRepo.findById(recordId)
@@ -68,7 +66,6 @@ public class GlucoseService {
         glucoseRepo.delete(record);
     }
 
-    /**Build dashboard statistics */
     @Transactional(readOnly = true)
     public GlucoseRecordDto.Stats getStats(Long userId, int targetLow, int targetHigh) {
         LocalDateTime now = LocalDateTime.now();
@@ -85,7 +82,11 @@ public class GlucoseService {
         long total = glucoseRepo.countByUserIdSince(userId, weekAgo);
         stats.setTotalReadings((int) total);
 
-        long inRange = glucoseRepo.countInRangeByUserIdSince(userId, weekAgo, targetLow, targetHigh);
+        long inRange = glucoseRepo.countInRangeByUserIdSince(
+            userId, weekAgo,
+            BigDecimal.valueOf(targetLow),
+            BigDecimal.valueOf(targetHigh)
+        );
         stats.setInRangeCount((int) inRange);
         stats.setInRangePercent(total > 0 ? (inRange * 100.0 / total) : 0.0);
 

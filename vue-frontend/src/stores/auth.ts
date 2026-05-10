@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import axios from '@/lib/axios'
 
-// Type for the user object — extend as needed to match your backend response
 interface AuthUser {
   id: string | number
   email: string

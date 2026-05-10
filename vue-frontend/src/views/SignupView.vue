@@ -14,7 +14,6 @@
 
       <div class="space-y-5">
 
-
         <div class="space-y-2">
           <button @click="auth.redirectToOAuth('google')"
             class="w-full flex items-center justify-center gap-3 py-3 px-4 card border border-border hover:bg-muted/50 transition-colors text-sm font-medium text-foreground">
@@ -23,13 +22,11 @@
           </button>
         </div>
 
-
         <div class="flex items-center gap-3">
           <div class="flex-1 h-px bg-border" />
           <span class="text-xs text-muted-foreground">or</span>
           <div class="flex-1 h-px bg-border" />
         </div>
-
 
         <div class="space-y-3">
           <div class="grid grid-cols-2 gap-3">
@@ -71,17 +68,16 @@
             <p v-if="password" class="text-xs" :class="strengthTextColor">{{ strengthLabel }}</p>
           </div>
 
-
           <div class="space-y-1.5">
             <label class="text-sm font-medium text-foreground">Diabetes type <span class="text-muted-foreground font-normal">(optional)</span></label>
             <select v-model="diabetesType"
               class="w-full border border-border rounded-lg px-3 py-2.5 bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
               <option value="">Prefer not to say</option>
-              <option value="type1">Type 1</option>
-              <option value="type2">Type 2</option>
-              <option value="gestational">Gestational</option>
-              <option value="prediabetes">Prediabetes</option>
-              <option value="other">Other</option>
+              <option value="TYPE_1">Type 1</option>
+              <option value="TYPE_2">Type 2</option>
+              <option value="GESTATIONAL">Gestational</option>
+              <option value="PREDIABETES">Prediabetes</option>
+              <option value="OTHER">Other</option>
             </select>
           </div>
 
@@ -169,9 +165,9 @@ async function submitSignup() {
   loading.value = true
   error.value = ''
   try {
+    // ✅ Combine firstName + lastName into single `name` field for backend
     await axios.post('/auth/signup', {
-      firstName: firstName.value,
-      lastName: lastName.value,
+      name: `${firstName.value.trim()} ${lastName.value.trim()}`.trim(),
       email: email.value,
       password: password.value,
       diabetesType: diabetesType.value || undefined,
@@ -180,7 +176,7 @@ async function submitSignup() {
     await auth.login({ email: email.value, password: password.value })
     router.push('/dashboard')
   } catch (e: any) {
-    error.value = e?.response?.data?.message ?? 'Something went wrong. Please try again.'
+    error.value = e?.response?.data?.error ?? e?.response?.data?.message ?? 'Something went wrong. Please try again.'
   } finally {
     loading.value = false
   }

@@ -3,16 +3,16 @@ package com.diabetesapp.dto;
 import com.diabetesapp.model.GlucoseRecord;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class GlucoseRecordDto {
 
-    /**Create/Update */
-    @Data
+@Data
     public static class Request {
         @NotNull
-        @Min(10) @Max(600)
-        private Integer value;
+        @DecimalMin(value = "10.0") @DecimalMax(value = "600.0")
+        private BigDecimal value;
 
         private LocalDateTime recordedAt;
 
@@ -26,7 +26,7 @@ public class GlucoseRecordDto {
     @Data
     public static class Response {
         private Long id;
-        private Integer value;
+        private BigDecimal value;
         private LocalDateTime recordedAt;
         private GlucoseRecord.MealContext mealContext;
         private String note;
@@ -44,7 +44,6 @@ public class GlucoseRecordDto {
         }
     }
 
-    /**Dashboard Summary Stats */
     @Data
     public static class Stats {
         private Double todayAvg;
