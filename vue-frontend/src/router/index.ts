@@ -11,7 +11,6 @@ const ChatView = () => import('@/views/Chat.vue')
 const BooksView = () => import('@/views/Books.vue')
 const TestingRecordsView = () => import('@/views/TestingRecords.vue')
 
-
 declare module 'vue-router' {
   interface RouteMeta {
     requiresAuth?: boolean
@@ -43,8 +42,13 @@ router.beforeEach((to) => {
     return { path: '/login', query: { redirect: to.fullPath } }
   }
 
-  if (to.meta.roles && !to.meta.roles.some((r) => auth.user?.roles?.includes(r))) {
-    return { path: '/login' } // redirect to login instead of /403 which doesn't exist
+  if (to.meta.requiresAuth && to.meta.roles && to.meta.roles.length > 0) {
+    const hasRole = to.meta.roles.some((r) => auth.user?.roles?.includes(r))
+    if (!hasRole) return { path: '/dashboard' }
+  }
+
+  if ((to.path === '/login' || to.path === '/signup') && auth.isAuthenticated) {
+    return { path: '/dashboard' }
   }
 })
 
