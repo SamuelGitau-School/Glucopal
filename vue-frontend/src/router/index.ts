@@ -1,33 +1,51 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Layout from '../components/layout/Layout.vue'
-import Dashboard from '../views/Dashboard.vue'
-import Chat from '../views/Chat.vue'
-import Books from '../views/Books.vue'
-import TestingRecords from '../views/TestingRecords.vue'
-import Profile from '../views/Profile.vue'
-import LandingView from '../views/LandingView.vue'
-import LoginView   from '../views/LoginView.vue'
-import SignupView  from '../views/SignupView.vue'
+import type { RouteRecordRaw } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+
+const LoginView = () => import('@/views/LoginView.vue')
+const DashboardView = () => import('@/views/Dashboard.vue')
+const LandingView = () => import('@/views/LandingView.vue')
+const SignupView = () => import('@/views/SignupView.vue')
+const ProfileView = () => import('@/views/Profile.vue')
+const ChatView = () => import('@/views/Chat.vue')
+const BooksView = () => import('@/views/Books.vue')
+const TestingRecordsView = () => import('@/views/TestingRecords.vue')
+
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    requiresAuth?: boolean
+    roles?: string[]
+  }
+}
+
+const routes: RouteRecordRaw[] = [
+  { path: '/', component: LandingView },
+  { path: '/login', component: LoginView },
+  { path: '/signup', component: SignupView },
+  { path: '/dashboard', component: DashboardView, meta: { requiresAuth: true } },
+  { path: '/profile', component: ProfileView, meta: { requiresAuth: true } },
+  { path: '/chat', component: ChatView, meta: { requiresAuth: true } },
+  { path: '/books', component: BooksView, meta: { requiresAuth: true } },
+  { path: '/testing-records', component: TestingRecordsView, meta: { requiresAuth: true } },
+  { path: '/:pathMatch(.*)*', redirect: '/' },
+]
 
 const router = createRouter({
   history: createWebHistory(),
+  routes,
+})
 
-  routes: [
-    {
-      path: '/',
-      component: Layout,
-      children: [
-        { path: '', name: 'dashboard', component: Dashboard,meta: { requiresAuth: true } },
-        { path: 'chat', name: 'chat', component: Chat },
-        { path: 'books', name: 'books', component: Books },
-        { path: 'records', name: 'records', component: TestingRecords },
-        { path: 'profile', name: 'profile', component: Profile },
-      ],
-    },
-    { path: '/',          component: LandingView },
-    { path: '/login',     component: LoginView },
-    { path: '/signup',    component: SignupView },
-  ],
+router.beforeEach((to) => {
+  const auth = useAuthStore()
+
+  if (to.meta.requiresAuth && !auth.isAuthenticated) {
+    return { path: '/login', query: { redirect: to.fullPath } }
+  }
+
+  if (to.meta.roles && !to.meta.roles.some((r) => auth.user?.roles?.includes(r))) {
+    return { path: '/login' } // redirect to login instead of /403 which doesn't exist
+  }
 })
 
 export default router

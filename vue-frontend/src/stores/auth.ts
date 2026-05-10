@@ -2,19 +2,38 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import axios from '@/lib/axios'
 
+// Type for the user object — extend as needed to match your backend response
+interface AuthUser {
+  id: string | number
+  email: string
+  roles?: string[]
+  [key: string]: unknown
+}
+
+interface LoginCredentials {
+  email: string
+  password: string
+}
+
+interface AuthResponse {
+  accessToken: string
+  user: AuthUser
+  mfaRequired?: boolean
+  mfaSessionToken?: string
+}
+
 export const useAuthStore = defineStore('auth', () => {
+  const accessToken = ref<string | null>(null)
+  const user = ref<AuthUser | null>(null)
+  const mfaPending = ref<boolean>(false)
+  const mfaSessionToken = ref<string | null>(null)
 
-
-  const accessToken = ref(null)
-  const user = ref(null)
-  const mfaPending = ref(false)
-  const mfaSessionToken = ref(null)
   const isAuthenticated = computed(() => !!accessToken.value && !mfaPending.value)
   const requiresMfa = computed(() => mfaPending.value)
 
-  async function init() {
+  async function init(): Promise<void> {
     try {
-      const { data } = await axios.post('/auth/refresh')
+      const { data } = await axios.post<AuthResponse>('/auth/refresh')
       accessToken.value = data.accessToken
       user.value = data.user
     } catch {
@@ -23,21 +42,22 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function login(credentials){
-    const { data } = await axios.post('/auth/login', credentials)
+  async function login(credentials: LoginCredentials): Promise<{ mfaRequired: boolean }> {
+    const { data } = await axios.post<AuthResponse>('/auth/login', credentials)
 
     if (data.mfaRequired) {
       mfaPending.value = true
-      mfaSessionToken.value = data.mfaSessionToken
+      mfaSessionToken.value = data.mfaSessionToken ?? null
       return { mfaRequired: true }
     }
+
     accessToken.value = data.accessToken
     user.value = data.user
     return { mfaRequired: false }
   }
 
-  async function verifyMfa(code) {
-    const { data } = await axios.post('/auth/mfa/verify', {
+  async function verifyMfa(code: string): Promise<void> {
+    const { data } = await axios.post<AuthResponse>('/auth/mfa/verify', {
       code,
       mfaSessionToken: mfaSessionToken.value,
     })
@@ -47,12 +67,15 @@ export const useAuthStore = defineStore('auth', () => {
     mfaSessionToken.value = null
   }
 
-  async function handleOAuthCallback(code, provider) {
-    const { data } = await axios.post('/auth/oauth/callback', { code, provider })
+  async function handleOAuthCallback(
+    code: string,
+    provider: string
+  ): Promise<{ mfaRequired: boolean }> {
+    const { data } = await axios.post<AuthResponse>('/auth/oauth/callback', { code, provider })
 
     if (data.mfaRequired) {
       mfaPending.value = true
-      mfaSessionToken.value = data.mfaSessionToken
+      mfaSessionToken.value = data.mfaSessionToken ?? null
       return { mfaRequired: true }
     }
 
@@ -61,30 +84,28 @@ export const useAuthStore = defineStore('auth', () => {
     return { mfaRequired: false }
   }
 
-
-  function redirectToOAuth(provider) {
+  function redirectToOAuth(provider: string): void {
     window.location.href = `${import.meta.env.VITE_API_URL}/oauth2/authorization/${provider}`
   }
 
-  async function handleSamlCallback() {
-    const { data } = await axios.post('/auth/saml/callback')
+  async function handleSamlCallback(): Promise<void> {
+    const { data } = await axios.post<AuthResponse>('/auth/saml/callback')
     accessToken.value = data.accessToken
     user.value = data.user
   }
 
-  function redirectToSaml() {
+  function redirectToSaml(): void {
     window.location.href = `${import.meta.env.VITE_API_URL}/saml2/authenticate/default`
   }
 
-  async function refreshToken(){
-    const { data } = await axios.post('/auth/refresh')
+  async function refreshToken(): Promise<string> {
+    const { data } = await axios.post<AuthResponse>('/auth/refresh')
     accessToken.value = data.accessToken
     user.value = data.user
     return data.accessToken
   }
 
-
-  async function logout() {
+  async function logout(): Promise<void> {
     try {
       await axios.post('/auth/logout')
     } finally {
@@ -96,7 +117,6 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return {
-
     user,
     accessToken,
     mfaPending,
