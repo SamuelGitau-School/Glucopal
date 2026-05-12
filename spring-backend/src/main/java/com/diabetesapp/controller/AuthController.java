@@ -1,5 +1,6 @@
 package com.diabetesapp.controller;
 
+import com.diabetesapp.JwtUtil;
 import com.diabetesapp.model.User;
 import com.diabetesapp.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
@@ -26,10 +27,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AuthController {
 
     private final UserRepository userRepo;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
+    // Refresh token store — swap for DB/Redis in production
     private final ConcurrentHashMap<String, Long> refreshTokenStore = new ConcurrentHashMap<>();
-
 
     @Data
     public static class SignupRequest {
@@ -43,10 +45,27 @@ public class AuthController {
         @Email @NotBlank private String email;
         @NotBlank private String password;
     }
+    // Add this method to AuthController.java inside the class
+
+    @GetMapping("/me")
+    public ResponseEntity<?> me(jakarta.servlet.http.HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body(Map.of("error", "No token"));
+        }
+        try {
+            Long userId = jwtUtil.getUserId(header.substring(7));
+            return userRepo.findById(userId)
+                    .map(user -> ResponseEntity.ok(userInfo(user)))
+                    .orElse(ResponseEntity.status(404).body(null));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid token"));
+        }
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest req,
-        HttpServletResponse response) {
+                                    HttpServletResponse response) {
         if (userRepo.findByEmail(req.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Email already in use"));
         }
@@ -57,8 +76,8 @@ public class AuthController {
         user.setPasswordHash(passwordEncoder.encode(req.getPassword()));
         userRepo.save(user);
 
-        String accessToken = generateToken();
-        String refreshToken = generateToken();
+        String accessToken = jwtUtil.generateToken(user.getId(), user.getEmail());
+        String refreshToken = generateRefreshToken();
         refreshTokenStore.put(refreshToken, user.getId());
 
         setRefreshCookie(response, refreshToken);
@@ -71,7 +90,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req,
-        HttpServletResponse response) {
+                                   HttpServletResponse response) {
         Optional<User> found = userRepo.findByEmail(req.getEmail());
 
         if (found.isEmpty() || !passwordEncoder.matches(req.getPassword(), found.get().getPasswordHash())) {
@@ -79,8 +98,9 @@ public class AuthController {
         }
 
         User user = found.get();
-        String accessToken = generateToken();
-        String refreshToken = generateToken();
+
+        String accessToken = jwtUtil.generateToken(user.getId(), user.getEmail());
+        String refreshToken = generateRefreshToken();
         refreshTokenStore.put(refreshToken, user.getId());
 
         setRefreshCookie(response, refreshToken);
@@ -93,7 +113,7 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(HttpServletRequest request,
-        HttpServletResponse response) {
+                                     HttpServletResponse response) {
         String refreshToken = extractRefreshCookie(request);
 
         if (refreshToken == null || !refreshTokenStore.containsKey(refreshToken)) {
@@ -109,10 +129,10 @@ public class AuthController {
 
         // Rotate refresh token
         refreshTokenStore.remove(refreshToken);
-        String newRefreshToken = generateToken();
+        String newRefreshToken = generateRefreshToken();
         refreshTokenStore.put(newRefreshToken, userId);
 
-        String newAccessToken = generateToken();
+        String newAccessToken = jwtUtil.generateToken(userId, found.get().getEmail());
         setRefreshCookie(response, newRefreshToken);
 
         return ResponseEntity.ok(Map.of(
@@ -129,7 +149,6 @@ public class AuthController {
             refreshTokenStore.remove(refreshToken);
         }
 
-        // Clear the cookie
         Cookie cookie = new Cookie("refreshToken", "");
         cookie.setMaxAge(0);
         cookie.setPath("/");
@@ -139,18 +158,16 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "Logged out"));
     }
 
-
-    private String generateToken() {
+    private String generateRefreshToken() {
         return UUID.randomUUID().toString().replace("-", "") +
-            UUID.randomUUID().toString().replace("-", "");
+               UUID.randomUUID().toString().replace("-", "");
     }
 
     private void setRefreshCookie(HttpServletResponse response, String token) {
         Cookie cookie = new Cookie("refreshToken", token);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-        // cookie.setSecure(true); // uncomment in production (HTTPS)
+        cookie.setMaxAge(7 * 24 * 60 * 60);
         response.addCookie(cookie);
     }
 
