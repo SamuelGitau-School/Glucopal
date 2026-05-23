@@ -7,7 +7,7 @@
         <DropletsIcon class="size-5 text-primary" />
         <span class="font-semibold text-foreground tracking-tight">GlucoseTrack</span>
       </div>
-      <button @click="$router.push('/login')" class="btn-primary text-sm px-4 py-2">
+      <button @click="$router.push('/roleselection')" class="btn-primary text-sm px-4 py-2">
         Sign in
       </button>
     </nav>
@@ -60,13 +60,13 @@
       </div>
 
       <div class="space-y-3 pb-8">
-        <button @click="$router.push('/signup')"
+        <button @click="$router.push('/roleselection')"
           class="btn-primary w-full py-4 text-base font-medium">
           Get started free
         </button>
         <p class="text-center text-xs text-muted-foreground">
           Already have an account?
-          <button @click="$router.push('/login')" class="text-primary underline underline-offset-2">Sign in</button>
+          <button @click="$router.push('/roleselection')" class="text-primary underline underline-offset-2">Sign in</button>
         </p>
       </div>
     </main>

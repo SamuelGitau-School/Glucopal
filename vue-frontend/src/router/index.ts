@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
+const RoleSelectionView = () => import('@/views/RoleSelectionView.vue')
 const LoginView = () => import('@/views/LoginView.vue')
 const DashboardView = () => import('@/views/Dashboard.vue')
 const LandingView = () => import('@/views/LandingView.vue')
@@ -22,6 +23,7 @@ declare module 'vue-router' {
 
 const routes: RouteRecordRaw[] = [
   { path: '/', component: LandingView, meta: { guestOnly: true } },
+  { path: '/roleselection', component: RoleSelectionView, meta: { guestOnly: true } },
   { path: '/login', component: LoginView, meta: { guestOnly: true } },
   { path: '/signup', component: SignupView, meta: { guestOnly: true } },
   { path: '/oauth-callback', component: () => import('@/views/OAuthCallback.vue') },
