@@ -12,16 +12,6 @@ from typing import Optional
 
 # Optional: LLM integration (requires: pip install openai)
 
-try:
-    from openai import AsyncOpenAI
-    _openai_client: Optional[AsyncOpenAI] = (
-        AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"])
-        if "OPENAI_API_KEY" in os.environ
-        else None
-    )
-except ImportError:
-    _openai_client = None
-
 SYSTEM_PROMPT = """You are a compassionate and knowledgeable diabetes care assistant.
 Your role is to:
 - Answer questions about blood glucose, nutrition, medication, exercise, and diabetes management.

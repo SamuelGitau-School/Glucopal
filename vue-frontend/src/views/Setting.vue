@@ -214,13 +214,6 @@
               </div>
             </div>
 
-            <div class="preview-strip">
-              <span class="preview-label">Preview</span>
-              <p class="preview-text">
-                The quick brown fox jumps over the lazy dog. Blood glucose: 7.4 mmol/L
-              </p>
-            </div>
-
           </section>
 
           <section v-if="activeSection === 'profile'" class="panel">
@@ -321,27 +314,25 @@ const sections = [
   { id: 'security',      label: 'Security',      icon: LockIcon },
 ]
 const activeSection = ref('appearance')
+const theme = ref(localStorage.getItem('app-theme') || 'system')
 
-/* ══════════════════════════════════════
-   APPEARANCE STATE
-══════════════════════════════════════ */
-
-/* Theme */
-const theme = ref('light')
-const setTheme = (val) => { theme.value = val }
-
+const setTheme = (val) => {
+  theme.value = val
+}
 watch(theme, (val) => {
+  localStorage.setItem('app-theme', val)
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
   const resolved = val === 'system' ? (prefersDark ? 'dark' : 'light') : val
   document.documentElement.setAttribute('data-theme', resolved)
 }, { immediate: true })
 
 /* High contrast */
-const highContrast = ref(false)
+const highContrast = ref(localStorage.getItem('app-high-contrast') === 'true')
+
 watch(highContrast, (val) => {
+  localStorage.setItem('app-high-contrast', val ? 'true' : 'false')
   document.documentElement.setAttribute('data-high-contrast', val ? 'true' : 'false')
 })
-
 /* Color blindness filter */
 const colorFilters = [
   { label: 'None',    value: 'none'    },
