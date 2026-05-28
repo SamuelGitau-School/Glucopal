@@ -381,7 +381,7 @@ function onLocationKeydown(e: KeyboardEvent) {
     e.preventDefault()
     const selected = locationResults.value[locationActiveIndex.value]
         if (selected) {
-        electLocation(selected)
+        selectLocation(selected)
       }
   } else if (e.key === 'Escape') {
     locationOpen.value = false
