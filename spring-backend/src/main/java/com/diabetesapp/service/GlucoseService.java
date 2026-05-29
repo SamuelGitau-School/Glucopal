@@ -6,6 +6,8 @@ import com.diabetesapp.model.User;
 import com.diabetesapp.repository.GlucoseRecordRepository;
 import com.diabetesapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ public class GlucoseService {
 
     private final GlucoseRecordRepository glucoseRepo;
     private final UserRepository userRepo;
+    private AnalyticsService analyticsService;
 
     @Transactional
     public GlucoseRecordDto.Response addReading(Long userId, GlucoseRecordDto.Request req) {
@@ -36,6 +39,8 @@ public class GlucoseService {
         return GlucoseRecordDto.Response.from(glucoseRepo.save(record));
     }
 
+    @Autowired
+    String analytics = analyticsService.getGlucoseAnalytics(userId);
     @Transactional(readOnly = true)
     public List<GlucoseRecordDto.Response> getAllReadings(Long userId) {
         return glucoseRepo.findByUserIdOrderByRecordedAtDesc(userId)
