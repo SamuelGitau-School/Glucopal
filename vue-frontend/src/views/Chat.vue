@@ -128,10 +128,13 @@ async function handleSend() {
   try {
     const apiUrl = import.meta.env.VITE_API_URL
     const userId = localStorage.getItem('userId') || '1'
-    const response = await fetch(`${apiUrl}/api/users/${userId}/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: userMessage }),
+    const response = await fetch(`${apiUrl}/users/${userId}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.accessToken}`
+  },
+  body: JSON.stringify({ message: userMessage }),
     })
 
     const data = await response.json()
