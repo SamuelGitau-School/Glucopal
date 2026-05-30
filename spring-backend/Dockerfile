@@ -5,4 +5,4 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 RUN mvn clean package -DskipTests -B
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "target/diabetes-backend-1.0.0.jar"]
+ENTRYPOINT ["sh", "-c", "java -jar target/*.jar"]
