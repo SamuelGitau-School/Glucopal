@@ -5,7 +5,7 @@ from typing import Optional
 from contextlib import asynccontextmanager
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/com`pletions"
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 SYSTEM_PROMPT = """You are a compassionate and knowledgeable diabetes care assistant.
 Your role is to:
