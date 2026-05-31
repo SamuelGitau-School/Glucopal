@@ -1,6 +1,9 @@
 <template>
+<SkeletonLoader v-if="profileLoading" type="profile" />
+<div v-else>
   <div class="min-h-screen bg-background">
     <div class="max-w-md mx-auto px-4 py-6 space-y-6">
+
 
       <!-- Profile Header -->
       <div class="card border-primary/20 p-6">
@@ -165,9 +168,11 @@
 
     </div>
   </div>
+</div>
 </template>
 
 <script setup lang="ts">
+import SkeletonLoader from '@/components/ui/SkeletonLoader.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
@@ -183,7 +188,7 @@ import {
 
 const auth = useAuthStore()
 const router = useRouter()
-
+const profileLoading = ref(true)
 const isEditing = ref(false)
 const isEditingHealth = ref(false)
 const saving = ref(false)
@@ -203,6 +208,7 @@ const form = ref({
 })
 
 onMounted(async () => {
+  profileLodading.value=true
   try {
     const { data } = await axios.get(`/users/${auth.user?.id}`)
     if (auth.user) {
@@ -218,8 +224,11 @@ onMounted(async () => {
     form.value.targetRangeLow = data.targetRangeLow ?? ''
     form.value.targetRangeHigh = data.targetRangeHigh ?? ''
     form.value.hba1cGoal = data.hba1cGoal ?? ''
-  } catch (e) {
-    console.error('Failed to load profile', e)
+  }
+  catch (e) {
+    console.error('Failed to load profile', e)}
+    finally{
+    profileLoading.value=false
   }
 })
 

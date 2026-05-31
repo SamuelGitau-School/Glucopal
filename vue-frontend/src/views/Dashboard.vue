@@ -12,10 +12,13 @@
         </div>
       </div>
 
-      <!-- Loading state -->
-      <div v-if="glucose.loading" class="text-center py-6 text-muted-foreground text-sm">
-        Loading your data...
-      </div>
+<template v-if="glucose.loading">
+  <div class="grid grid-cols-2 gap-3">
+    <SkeletonLoader v-for="i in 4" :key="i" type="stat" />
+  </div>
+  <SkeletonLoader type="chart" />
+  <SkeletonLoader type="card" />
+</template>
 
       <template v-else>
         <!-- Quick Stats -->
@@ -144,6 +147,7 @@ import {
   Activity as ActivityIcon,
   Plus as PlusIcon,
 } from 'lucide-vue-next'
+import SkeletonLoader from '@/components/ui/SkeletonLoader.vue'
 
 const glucose = useGlucoseStore()
 const auth = useAuthStore()

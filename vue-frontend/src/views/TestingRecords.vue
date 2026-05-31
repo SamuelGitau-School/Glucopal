@@ -7,6 +7,9 @@
         <p class="text-sm text-muted-foreground">Track and monitor your glucose readings</p>
       </div>
 
+      <template v-if="glucose.loading">
+        <SkeletonLoader v-for="i in 5" :key="i" type="list-item" class="mb-3" />
+      </template>
       <!-- Error Banner -->
       <div v-if="glucose.error" class="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
         {{ glucose.error }}
@@ -151,6 +154,7 @@ import {
   TrendingDown as TrendingDownIcon,
   Minus as MinusIcon,
 } from 'lucide-vue-next'
+import SkeletonLoader from '@/components/ui/SkeletonLoader.vue'
 
 const glucose = useGlucoseStore()
 const activeTab = ref('all')

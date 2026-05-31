@@ -40,19 +40,15 @@
 
         <!-- Typing indicator -->
         <div v-if="isTyping" class="flex gap-3">
-          <div class="size-8 rounded-full bg-muted flex items-center justify-center">
+          <div class="size-8 rounded-full bg-muted flex items-center justify-center shrink-0">
             <BotIcon class="size-4 text-muted-foreground" />
           </div>
-          <div class="bg-card border border-border rounded-xl p-3">
-            <div class="flex gap-1 items-center h-4">
-              <span class="size-2 bg-muted-foreground rounded-full animate-bounce" style="animation-delay:0ms" />
-              <span class="size-2 bg-muted-foreground rounded-full animate-bounce" style="animation-delay:150ms" />
-              <span class="size-2 bg-muted-foreground rounded-full animate-bounce" style="animation-delay:300ms" />
-            </div>
-          </div>
+          <div class="space-y-2 flex-1 max-w-[75%]">
+            <SkeletonLoader type="line" width="80%" height="0.75rem" />
+            <SkeletonLoader type="line" width="60%" height="0.75rem" />
         </div>
       </div>
-
+    </div>
       <!-- Input -->
       <div class="bg-card border-t border-border p-4">
         <div class="flex gap-2">
