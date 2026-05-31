@@ -202,6 +202,27 @@ const form = ref({
   hba1cGoal: (auth.user?.hba1cGoal as number | '') ?? '',
 })
 
+onMounted(async () => {
+  try {
+    const { data } = await axios.get(`/users/${auth.user?.id}`)
+    if (auth.user) {
+      auth.user = { ...auth.user, ...data }
+      localStorage.setItem('user', JSON.stringify(auth.user))
+    }
+    form.value.name = data.name ?? ''
+    form.value.phone = data.phone ?? ''
+    form.value.dateOfBirth = data.dateOfBirth ?? ''
+    form.value.location = data.location ?? ''
+    form.value.diabetesType = data.diabetesType ?? ''
+    form.value.diagnosedYear = data.diagnosedYear ?? ''
+    form.value.targetRangeLow = data.targetRangeLow ?? ''
+    form.value.targetRangeHigh = data.targetRangeHigh ?? ''
+    form.value.hba1cGoal = data.hba1cGoal ?? ''
+  } catch (e) {
+    console.error('Failed to load profile', e)
+  }
+})
+
 const initials = computed(() =>
   form.value.name
     .split(' ')
@@ -221,9 +242,9 @@ function cancelEdit() {
 }
 
 async function saveProfile() {
-  saving.value = true
   saveError.value = ''
   saveSuccess.value = false
+  saving.value = true
   try {
     const { data } = await axios.put(`/users/${auth.user?.id}/profile`, {
       name: form.value.name,
@@ -236,13 +257,13 @@ async function saveProfile() {
       targetRangeHigh: form.value.targetRangeHigh || null,
       hba1cGoal: form.value.hba1cGoal || null,
     })
-    // Update auth store with new user data
     if (auth.user) {
       auth.user = { ...auth.user, ...data }
+      localStorage.setItem('user', JSON.stringify(auth.user))
     }
+    saveSuccess.value = true
     isEditing.value = false
     isEditingHealth.value = false
-    saveSuccess.value = true
     setTimeout(() => saveSuccess.value = false, 3000)
   } catch (e: any) {
     saveError.value = e?.response?.data?.error ?? 'Failed to save. Please try again.'
