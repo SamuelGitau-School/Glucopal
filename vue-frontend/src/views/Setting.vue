@@ -296,8 +296,8 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { useThemeStore } from '@/stores/theme'
 
-/* ── Inline icon components ── */
 const PaletteIcon  = { template: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>` }
 const UserIcon     = { template: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>` }
 const BellIcon     = { template: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>` }
@@ -306,7 +306,6 @@ const SunIcon      = { template: `<svg xmlns="http://www.w3.org/2000/svg" width=
 const MoonIcon     = { template: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>` }
 const MonitorIcon  = { template: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg>` }
 
-/* ── Nav sections ── */
 const sections = [
   { id: 'appearance',    label: 'Appearance',    icon: PaletteIcon },
   { id: 'profile',       label: 'Profile',       icon: UserIcon },
@@ -314,17 +313,11 @@ const sections = [
   { id: 'security',      label: 'Security',      icon: LockIcon },
 ]
 const activeSection = ref('appearance')
-const theme = ref(localStorage.getItem('app-theme') || 'system')
 
-const setTheme = (val) => {
-  theme.value = val
-}
-watch(theme, (val) => {
-  localStorage.setItem('app-theme', val)
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-  const resolved = val === 'system' ? (prefersDark ? 'dark' : 'light') : val
-  document.documentElement.setAttribute('data-theme', resolved)
-}, { immediate: true })
+const themeStore = useThemeStore()
+const theme = computed(() => themeStore.theme)
+const setTheme = (val) => themeStore.setTheme(
+  val)
 
 /* High contrast */
 const highContrast = ref(localStorage.getItem('app-high-contrast') === 'true')
