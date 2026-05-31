@@ -171,7 +171,8 @@ const firstName = computed(() => {
 // Most recent glucose reading
 const currentReading = computed(() => {
   if (!glucose.records.length) return '—'
-  return glucose.records[0].value
+  const latest = glucose.records[0]
+  return latest ? latest.value : '—'
 })
 
 // Estimated A1C from 7-day average
