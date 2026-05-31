@@ -60,7 +60,7 @@ def _rule_based_reply(message: str) -> str:
     return GENERIC_REPLY
 
 
-# ── OpenRouter LLM ─────────────────────────────────────────────────
+
 
 async def _openrouter_reply(message: str) -> Optional[str]:
     if not OPENROUTER_API_KEY:
@@ -73,7 +73,7 @@ async def _openrouter_reply(message: str) -> Optional[str]:
             "X-Title": "Glucopal"
         }
         payload = {
-            "model": "mistralai/mistral-7b-instruct:free",
+            "model": "openrouter/owl-alpha",
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": message}
@@ -98,4 +98,3 @@ async def generate_reply(message: str) -> str:
     if llm_reply:
         return llm_reply
     return _rule_based_reply(message)
-    
