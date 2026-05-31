@@ -22,13 +22,15 @@ async_client: Optional[httpx.AsyncClient] = None
 # ── Lifespan Setup ──────────────────────────────────────────────────
 # Use this in your framework (e.g., FastAPI: @app.lifespan or lifespan=lifespan)
 @asynccontextmanager
-async def lifespan_pool():
+async def lifespan_pool(app):
     global async_client
     async_client = httpx.AsyncClient(timeout=30.0)
     try:
         yield
     finally:
-        await async_client.aclose()
+        if async_client is not None:
+            await async_client.aclose()
+            async_client = None
 
 # ── Rule-based fallback (Pre-compiled Regex Patterns) ──────────────
 
