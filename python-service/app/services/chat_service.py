@@ -1,12 +1,11 @@
-# Generates diabetes-care AI responses.
-# Uses OpenRouter LLM if OPENROUTER_API_KEY is set, otherwise falls back to rule-based responses.
-
 import os
+import re
 import httpx
 from typing import Optional
+from contextlib import asynccontextmanager
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/com`pletions"
 
 SYSTEM_PROMPT = """You are a compassionate and knowledgeable diabetes care assistant.
 Your role is to:
@@ -17,9 +16,23 @@ Your role is to:
 - Flag any values that sound dangerously low (<55 mg/dL) or high (>300 mg/dL) and urge immediate medical attention.
 Keep responses concise (2-4 sentences) unless a detailed explanation is genuinely needed."""
 
-# ── Rule-based fallback ────────────────────────────────────────────
+# The global client variable
+async_client: Optional[httpx.AsyncClient] = None
 
-KEYWORD_RESPONSES: list[tuple[list[str], str]] = [
+# ── Lifespan Setup ──────────────────────────────────────────────────
+# Use this in your framework (e.g., FastAPI: @app.lifespan or lifespan=lifespan)
+@asynccontextmanager
+async def lifespan_pool():
+    global async_client
+    async_client = httpx.AsyncClient(timeout=30.0)
+    try:
+        yield
+    finally:
+        await async_client.aclose()
+
+# ── Rule-based fallback (Pre-compiled Regex Patterns) ──────────────
+
+RAW_KEYWORD_RESPONSES = [
     (["low", "hypoglycemia", "hypo", "shaky", "dizzy"],
      "Low blood sugar (hypoglycemia) occurs when your glucose drops below 70 mg/dL. "
      "Follow the 15-15 rule: consume 15 g of fast-acting carbs, wait 15 minutes, and recheck. "
@@ -45,6 +58,12 @@ KEYWORD_RESPONSES: list[tuple[list[str], str]] = [
      "Mindfulness, deep breathing, and regular physical activity can help manage stress."),
 ]
 
+# Optimisation: Compile patterns once on startup rather than during the request path
+KEYWORD_RESPONSES: list[tuple[re.Pattern, str]] = [
+    (re.compile(rf"\b({'|'.join(keywords)})\b"), response)
+    for keywords, response in RAW_KEYWORD_RESPONSES
+]
+
 GENERIC_REPLY = (
     "I'm your diabetes care assistant. I can answer questions about blood glucose, "
     "nutrition, medication, exercise, and general diabetes management. "
@@ -54,44 +73,52 @@ GENERIC_REPLY = (
 
 def _rule_based_reply(message: str) -> str:
     lower = message.lower()
-    for keywords, response in KEYWORD_RESPONSES:
-        if any(kw in lower for kw in keywords):
+    for pattern, response in KEYWORD_RESPONSES:
+        if pattern.search(lower):
             return response
     return GENERIC_REPLY
-
-
 
 
 async def _openrouter_reply(message: str) -> Optional[str]:
     if not OPENROUTER_API_KEY:
         return None
+
+    global async_client
+    created_locally = False
+    client: httpx.AsyncClient
+
+    if async_client is None:
+        client = httpx.AsyncClient(timeout=30.0)
+        created_locally = True
+    else:
+        client = async_client
+
     try:
         headers = {
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://glucopal.vercel.app",
+            "HTTP-Referer": "https://glucopal-peach.vercel.app",
             "X-Title": "Glucopal"
         }
         payload = {
-            "model": "openrouter/owl-alpha",
+            "model": "mistralai/mistral-7b-instruct:free",
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": message}
+                {"role": "user", "content": message[:1000]}
             ],
             "max_tokens": 300
         }
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                OPENROUTER_URL, json=payload, headers=headers, timeout=30
-            )
-            response.raise_for_status()
-            data = response.json()
-            return data["choices"][0]["message"]["content"].strip()
-    except Exception:
+        response = await client.post(OPENROUTER_URL, json=payload, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        return data["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        print(f"OpenRouter error: {e}")
         return None
+    finally:
+        if created_locally:
+            await client.aclose()
 
-
-# ── Public interface ───────────────────────────────────────────────
 
 async def generate_reply(message: str) -> str:
     llm_reply = await _openrouter_reply(message)
