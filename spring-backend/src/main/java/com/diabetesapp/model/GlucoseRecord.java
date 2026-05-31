@@ -18,7 +18,7 @@ public class GlucoseRecord {
     private Long id;
 
     @NotNull
-    @DecimalMin(value = "10.0", message = "Glucose value must be at least 10 mg/dL")
+    @DecimalMin(value = "20.0", message = "Glucose value must be at least 20 mg/dL")
     @DecimalMax(value = "600.0", message = "Glucose value must be at most 600 mg/dL")
     private BigDecimal value;
 
@@ -48,3 +48,4 @@ public class GlucoseRecord {
 
     public enum GlucoseStatus { LOW, NORMAL, HIGH }
 }
+

@@ -106,13 +106,15 @@
     </div>
 
     <!-- Add Reading Modal -->
-     <div v-if="showAddModal" class="fixed inset-0 bg-black/50 z-50 flex items-end justify-center" @click.self="showAddModal = false">
+    <div v-if="showAddModal" class="fixed inset-0 bg-black/50 z-50 flex items-end justify-center" @click.self="showAddModal = false">
       <div class="bg-card w-full max-w-md rounded-t-2xl p-6 space-y-4">
         <h3 class="text-lg font-medium text-foreground">Add New Reading</h3>
         <div class="space-y-3">
           <div>
             <label class="text-sm text-muted-foreground">Glucose Value (mg/dL)</label>
-            <input v-model.number="newReading.value" type="number" class="w-full mt-1 px-3 py-2 border border-border rounded-lg bg-background text-sm" placeholder="e.g. 120" />
+            <input v-model="newReading.value" type="number" min="20" max="600" placeholder="e.g. 120 mg/dL"
+  class="w-full mt-1 px-3 py-2 border border-border rounded-lg bg-background text-sm"
+/>
           </div>
           <div>
             <label class="text-sm text-muted-foreground">Meal Context</label>

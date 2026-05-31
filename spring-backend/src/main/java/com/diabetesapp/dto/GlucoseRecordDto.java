@@ -8,10 +8,11 @@ import java.time.LocalDateTime;
 
 public class GlucoseRecordDto {
 
-@Data
+    @Data
     public static class Request {
         @NotNull
-        @DecimalMin(value = "10.0") @DecimalMax(value = "600.0")
+        @DecimalMin(value = "20.0", message = "Glucose value must be at least 20 mg/dL (glucometer minimum)")
+        @DecimalMax(value = "600.0", message = "Glucose value must be at most 600 mg/dL (glucometer maximum)")
         private BigDecimal value;
 
         private LocalDateTime recordedAt;
@@ -22,7 +23,6 @@ public class GlucoseRecordDto {
         private String note;
     }
 
-    /**API response */
     @Data
     public static class Response {
         private Long id;
