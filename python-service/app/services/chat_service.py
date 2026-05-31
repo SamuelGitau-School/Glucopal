@@ -103,7 +103,7 @@ async def _openrouter_reply(message: str) -> Optional[str]:
             "X-Title": "Glucopal"
         }
         payload = {
-            "model": "mistralai/mistral-7b-instruct:free",
+            "model": "meta-llama/llama-3.2-3b-instruct:free",
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": message[:1000]}
