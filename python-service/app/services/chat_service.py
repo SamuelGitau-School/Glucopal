@@ -127,3 +127,4 @@ async def generate_reply(message: str) -> str:
     if llm_reply:
         return llm_reply
     return _rule_based_reply(message)
+
