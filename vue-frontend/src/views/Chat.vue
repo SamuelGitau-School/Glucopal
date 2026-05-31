@@ -79,6 +79,8 @@ import { ref, nextTick } from 'vue'
 import { Send as SendIcon, Bot as BotIcon, User as UserIcon } from 'lucide-vue-next'
 import { useAuthStore } from '../stores/auth';
 
+const auth = useAuthStore()
+
 interface Message {
   id: string
   text: string
