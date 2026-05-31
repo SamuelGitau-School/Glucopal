@@ -77,6 +77,7 @@
 <script setup lang="ts">
 import { ref, nextTick } from 'vue'
 import { Send as SendIcon, Bot as BotIcon, User as UserIcon } from 'lucide-vue-next'
+import { useAuthStore } from '../stores/auth';
 
 interface Message {
   id: string
@@ -157,30 +158,14 @@ async function handleSend() {
     await scrollToBottom()
   }
 }
-// async function handleSend() {
-//   if (!inputValue.value.trim()) return
+async function handleSend() {
+  if (!inputValue.value.trim()) return
 
-//   messages.value.push({
-//     id: Date.now().toString(),
-//     text: inputValue.value,
-//     sender: 'user',
-//     timestamp: new Date(),
-//   })
-
-//   inputValue.value = ''
-//   await scrollToBottom()
-//   isTyping.value = true
-
-//   // Calls Python AI service via Spring Boot proxy at /api/chat
-//   setTimeout(async () => {
-//     isTyping.value = false
-//     messages.value.push({
-//       id: (Date.now() + 1).toString(),
-//       text: 'I understand your question about diabetes management. While I can provide general information, please consult with your healthcare provider for personalized medical advice.',
-//       sender: 'bot',
-//       timestamp: new Date(),
-//     })
-//     await scrollToBottom()
-//   }, 1200)
-// }
+  messages.value.push({
+    id: Date.now().toString(),
+    text: inputValue.value,
+    sender: 'user',
+    timestamp: new Date(),
+  })
+}
 </script>
