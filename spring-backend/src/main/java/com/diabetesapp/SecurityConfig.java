@@ -59,8 +59,10 @@ public class SecurityConfig {
             .headers(headers -> headers.frameOptions(frame -> frame.disable()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/api/**").authenticated()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
