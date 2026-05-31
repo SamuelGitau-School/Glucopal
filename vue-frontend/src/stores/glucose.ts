@@ -1,14 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-
-const USER_ID = 1 // TODO: replace with real auth user ID
+import { useAuthStore } from './auth'
 
 export interface GlucoseRecord {
   id: string
   value: number
   recordedAt: string
   note?: string
-  mealContext?: 'BEFORE' | 'AFTER' | 'FASTING'
+  mealContext?: 'BEFORE_MEAL' | 'AFTER_MEAL' | 'FASTING'
   status?: string
 }
 
@@ -17,8 +16,24 @@ export const useGlucoseStore = defineStore('glucose', () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
+  function getHeaders() {
+    const auth = useAuthStore()
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${auth.accessToken}`
+    }
+  }
+
+  function getUserId() {
+    const auth = useAuthStore()
+    return auth.user?.id
+  }
+
+  function getBaseUrl() {
+    return import.meta.env.VITE_API_URL
+  }
+
   const weeklyData = computed(() => {
-    // Group by day and average for the chart
     const days: Record<string, number[]> = {}
     records.value.forEach(r => {
       const day = new Date(r.recordedAt).toLocaleDateString('en-US', { weekday: 'short' })
@@ -46,12 +61,15 @@ export const useGlucoseStore = defineStore('glucose', () => {
     return Math.round(records.value.reduce((sum, r) => sum + r.value, 0) / records.value.length)
   })
 
-  // Fetch all records from the backend
   async function fetchRecords() {
+    const userId = getUserId()
+    if (!userId) return
     loading.value = true
     error.value = null
     try {
-      const res = await fetch(`/api/users/${USER_ID}/glucose`)
+      const res = await fetch(`${getBaseUrl()}/users/${userId}/glucose`, {
+        headers: getHeaders()
+      })
       if (!res.ok) throw new Error('Failed to fetch records')
       records.value = await res.json()
     } catch (e: any) {
@@ -61,14 +79,15 @@ export const useGlucoseStore = defineStore('glucose', () => {
     }
   }
 
-  // Save a new record to the backend
   async function addRecord(record: { value: number; mealContext?: string; note?: string }) {
+    const userId = getUserId()
+    if (!userId) return
     loading.value = true
     error.value = null
     try {
-      const res = await fetch(`/api/users/${USER_ID}/glucose`, {
+      const res = await fetch(`${getBaseUrl()}/users/${userId}/glucose`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getHeaders(),
         body: JSON.stringify({
           value: record.value,
           mealContext: record.mealContext?.toUpperCase() ?? null,
@@ -86,10 +105,14 @@ export const useGlucoseStore = defineStore('glucose', () => {
     }
   }
 
-  // Delete a record
   async function deleteRecord(recordId: string) {
+    const userId = getUserId()
+    if (!userId) return
     try {
-      const res = await fetch(`/api/users/${USER_ID}/glucose/${recordId}`, { method: 'DELETE' })
+      const res = await fetch(`${getBaseUrl()}/users/${userId}/glucose/${recordId}`, {
+        method: 'DELETE',
+        headers: getHeaders()
+      })
       if (!res.ok) throw new Error('Failed to delete record')
       records.value = records.value.filter(r => r.id !== recordId)
     } catch (e: any) {
@@ -104,17 +127,15 @@ export const useGlucoseStore = defineStore('glucose', () => {
   }
 
   function getMealContextLabel(ctx?: string) {
-    const map: Record<string, string> = { FASTING: 'Fasting', BEFORE: 'Before Meal', AFTER: 'After Meal' }
+    const map: Record<string, string> = { FASTING: 'Fasting', BEFORE_MEAL: 'Before Meal', AFTER_MEAL: 'After Meal' }
     return ctx ? map[ctx] ?? '' : ''
   }
 
-  // Format a record's date for display
   function formatDate(recordedAt: string) {
     const date = new Date(recordedAt)
     const today = new Date()
     const yesterday = new Date()
     yesterday.setDate(today.getDate() - 1)
-
     if (date.toDateString() === today.toDateString()) return 'Today'
     if (date.toDateString() === yesterday.toDateString()) return 'Yesterday'
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
