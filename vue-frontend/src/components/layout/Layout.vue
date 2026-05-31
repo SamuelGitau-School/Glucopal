@@ -2,7 +2,7 @@
   <div class="size-full flex flex-col bg-background min-h-screen">
     <!-- Header -->
     <header class="bg-card border-b border-border shadow-sm sticky top-0 z-10">
-      <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
         <!-- Profile Section -->
         <div class="flex items-center gap-3">
           <div class="size-10 rounded-full border-2 border-primary/20 bg-primary/10 flex items-center justify-center text-primary font-semibold">
@@ -56,7 +56,7 @@
 
     <!-- Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-lg">
-      <div class="max-w-md mx-auto px-4 py-3">
+      <div class="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-4 py-3">
         <div class="flex justify-around items-center">
           <RouterLink
             v-for="item in navItems"
@@ -140,3 +140,4 @@ function handleClickOutside(e: MouseEvent) {
 onMounted(() => document.addEventListener('click', handleClickOutside))
 onUnmounted(() => document.removeEventListener('click', handleClickOutside))
 </script>
+

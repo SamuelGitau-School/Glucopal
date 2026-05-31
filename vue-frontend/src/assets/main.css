@@ -161,3 +161,92 @@ body {
 .size-12 { width: 3rem; height: 3rem; }
 .size-16 { width: 4rem; height: 4rem; }
 .size-24 { width: 6rem; height: 6rem; }
+
+/*Universal Responsive Layout */
+.page-container {
+  max-width: 28rem;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .page-container {
+    max-width: 36rem;
+    padding: 0 1.5rem;
+  }
+
+  nav .max-w-md {
+    max-width: 36rem;
+  }
+
+  header .max-w-md {
+    max-width: 36rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-container {
+    max-width: 42rem;
+    padding: 0 2rem;
+  }
+
+  nav .max-w-md,
+  header .max-w-md {
+    max-width: 42rem;
+  }
+}
+
+
+@media (min-width: 640px) {
+  .card {
+    border-radius: 1rem;
+  }
+}
+
+
+.responsive-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
+@media (min-width: 640px) {
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.375rem; }
+}
+
+
+@media (min-width: 640px) {
+  main.flex-1 {
+    padding-bottom: 5rem;
+  }
+}
+
+
+@media (max-width: 639px) {
+  button, a {
+    min-height: 44px;
+  }
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
