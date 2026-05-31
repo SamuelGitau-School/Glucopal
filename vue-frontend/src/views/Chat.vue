@@ -158,14 +158,4 @@ async function handleSend() {
     await scrollToBottom()
   }
 }
-async function handleSend() {
-  if (!inputValue.value.trim()) return
-
-  messages.value.push({
-    id: Date.now().toString(),
-    text: inputValue.value,
-    sender: 'user',
-    timestamp: new Date(),
-  })
-}
 </script>
