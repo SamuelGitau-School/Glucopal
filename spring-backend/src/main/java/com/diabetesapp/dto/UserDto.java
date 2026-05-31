@@ -9,23 +9,14 @@ public class UserDto {
 
     @Data
     public static class UpdateRequest {
-        @NotBlank
-        private String name;
-
+        @NotBlank private String name;
         private String phone;
-
         private LocalDate dateOfBirth;
-
         private String location;
-
         private User.DiabetesType diabetesType;
-
         private Integer diagnosedYear;
-
         private Integer targetRangeLow;
-
         private Integer targetRangeHigh;
-
         private Double hba1cGoal;
     }
 
@@ -62,8 +53,7 @@ public class UserDto {
 
     @Data
     public static class ChatRequest {
-        @NotBlank
-        private String message;
+        @NotBlank private String message;
     }
 
     @Data
