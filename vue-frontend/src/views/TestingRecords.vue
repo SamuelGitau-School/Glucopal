@@ -106,7 +106,7 @@
     </div>
 
     <!-- Add Reading Modal -->
-    <div v-if="showAddModal" class="fixed inset-0 bg-black/50 z-50 flex items-end justify-center" click.self="showAddModal = false">
+     <div v-if="showAddModal" class="fixed inset-0 bg-black/50 z-50 flex items-end justify-center" @click.self="showAddModal = false">
       <div class="bg-card w-full max-w-md rounded-t-2xl p-6 space-y-4">
         <h3 class="text-lg font-medium text-foreground">Add New Reading</h3>
         <div class="space-y-3">
