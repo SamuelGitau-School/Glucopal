@@ -67,7 +67,7 @@ export const useGlucoseStore = defineStore('glucose', () => {
     loading.value = true
     error.value = null
     try {
-      const res = await fetch(`${getBaseUrl()}/users/${userId}/glucose`, {
+      const res = await fetch(`${getBaseUrl()}/api/users/${userId}/glucose`, {
         headers: getHeaders()
       })
       if (!res.ok) throw new Error('Failed to fetch records')
@@ -85,7 +85,7 @@ export const useGlucoseStore = defineStore('glucose', () => {
     loading.value = true
     error.value = null
     try {
-      const res = await fetch(`${getBaseUrl()}/users/${userId}/glucose`, {
+      const res = await fetch(`${getBaseUrl()}/api/users/${userId}/glucose`, {
         method: 'POST',
         headers: getHeaders(),
         body: JSON.stringify({
@@ -109,7 +109,7 @@ export const useGlucoseStore = defineStore('glucose', () => {
     const userId = getUserId()
     if (!userId) return
     try {
-      const res = await fetch(`${getBaseUrl()}/users/${userId}/glucose/${recordId}`, {
+      const res = await fetch(`${getBaseUrl()}/api/users/${userId}/glucose/${recordId}`, {
         method: 'DELETE',
         headers: getHeaders()
       })
@@ -152,3 +152,5 @@ export const useGlucoseStore = defineStore('glucose', () => {
     getStatusInfo, getMealContextLabel, formatDate, formatTime,
   }
 })
+
+
