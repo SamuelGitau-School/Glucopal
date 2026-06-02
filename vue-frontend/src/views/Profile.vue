@@ -208,7 +208,7 @@ const form = ref({
 })
 
 onMounted(async () => {
-  profileLodading.value= false
+  profileLoading.value= true
   try {
     const { data } = await axios.get(`/users/${auth.user?.id}`)
     if (auth.user) {
