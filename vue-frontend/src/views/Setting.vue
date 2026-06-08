@@ -33,7 +33,7 @@
             <div class="setting-group">
               <div class="group-title">Theme &amp; contrast</div>
 
-              <div class="setting-row">
+              <div class="setting-row" id="group_1">
                 <div class="setting-info">
                   <span class="setting-label">Theme</span>
                   <span class="setting-desc">Reduce glare and eye strain with dark mode</span>
@@ -67,7 +67,7 @@
                 </button>
               </div>
 
-              <div class="setting-row">
+              <div class="setting-row" id="group_1">
                 <div class="setting-info">
                   <span class="setting-label">Color blindness filter</span>
                   <span class="setting-desc">Adjusts the color palette for different types of color vision deficiency</span>
@@ -89,7 +89,7 @@
             <div class="setting-group">
               <div class="group-title">Typography</div>
 
-              <div class="setting-row setting-row--col">
+              <div class="setting-row setting-row--col" id="group_1">
                 <div class="setting-info">
                   <span class="setting-label">Font size scale</span>
                   <span class="setting-desc">Scale all text from 100% up to 200% without breaking layout</span>
@@ -110,12 +110,12 @@
                 </div>
               </div>
 
-              <div class="setting-row">
+              <div class="setting-row" id="group_1">
                 <div class="setting-info">
                   <span class="setting-label">Font family</span>
                   <span class="setting-desc">Atkinson Hyperlegible has distinct character shapes that resist blurring</span>
                 </div>
-                <div class="universal-segmented">
+                <div class="universal-segmented" id="group_1">
                   <button
                     v-for="ff in fontFamilies"
                     :key="ff.value"
@@ -128,7 +128,7 @@
                 </div>
               </div>
 
-              <div class="setting-row">
+              <div class="setting-row" id="group_1">
                 <div class="setting-info">
                   <span class="setting-label">Line spacing</span>
                   <span class="setting-desc">Extra leading prevents letters from merging during blurred vision episodes</span>
@@ -146,7 +146,7 @@
                 </div>
               </div>
 
-              <div class="setting-row">
+              <div class="setting-row"id="group_1">
                 <div class="setting-info">
                   <span class="setting-label">Letter spacing</span>
                   <span class="setting-desc">Wider tracking gives each character more visual separation</span>
@@ -165,7 +165,7 @@
               </div>
             </div>
 
-            <div class="setting-group">
+            <div class="setting-group" >
               <div class="group-title">Interface layout</div>
 
               <div class="setting-row">
@@ -576,9 +576,20 @@ const notifications = ref([
 .panel-actions { padding: 1rem 1.5rem; border-top: 1px solid var(--border); }
 
 /* ── Responsive ── */
+
+@media (max-width:750px) {
+#group_1.setting-row {display:flex;flex-direction:column;align-items: flex-start;}
+
+}
 @media (max-width: 640px) {
   .settings-body { flex-direction: column; }
   .settings-nav { flex-direction: row; flex-wrap: wrap; min-width: unset; width: 100%; }
   .nav-item { flex: 1; justify-content: center; min-width: 72px; }
+}
+
+@media (max-width: 400px) {
+  #group_1.universal-segmented{
+    size :700px;
+  }
 }
 </style>
