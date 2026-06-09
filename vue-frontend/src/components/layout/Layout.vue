@@ -86,6 +86,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterView, RouterLink, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { Utensils as UtensilsIcon } from 'lucide-vue-next'
 import {
   LayoutDashboard as LayoutDashboardIcon,
   MessageCircle as MessageCircleIcon,
@@ -118,6 +119,7 @@ const navItems = [
   { to: '/chat', label: 'Chat', icon: MessageCircleIcon },
   { to: '/books', label: 'Books', icon: BookOpenIcon },
   { to: '/testing-records', label: 'Records', icon: ActivityIcon },
+  { to: '/meals', label: 'Meals', icon: UtensilsIcon },
 ]
 
 function goTo(path: string) {

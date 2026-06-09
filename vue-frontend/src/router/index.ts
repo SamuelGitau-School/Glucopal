@@ -13,7 +13,7 @@ const Setting = () => import('@/views/Setting.vue')
 const ChatView = () => import('@/views/Chat.vue')
 const BooksView = () => import('@/views/Books.vue')
 const TestingRecordsView = () => import('@/views/TestingRecords.vue')
-
+const MealsView = () => import('@/views/MealsView.vue')
 declare module 'vue-router' {
   interface RouteMeta {
     requiresAuth?: boolean
@@ -35,6 +35,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/chat', component: ChatView, meta: { requiresAuth: true } },
   { path: '/books', component: BooksView, meta: { requiresAuth: true } },
   { path: '/testing-records', component: TestingRecordsView, meta: { requiresAuth: true } },
+  { path: '/meals', component: MealsView, meta: { requiresAuth: true } },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 

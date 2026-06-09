@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from app.routes.meals import router as meals_router
 from app.routes.chat import router as chat_router
 from app.routes.analytics import router as analytics_router
 
@@ -25,6 +25,9 @@ app.add_middleware(
 
 app.include_router(chat_router, prefix="", tags=["Chat"])
 app.include_router(analytics_router, prefix="/analytics", tags=["Analytics"])
+
+
+app.include_router(meals_router, prefix="", tags=["Meals"])
 
 
 @app.get("/health")
