@@ -5,6 +5,9 @@ declare module '*.vue' {
 }
 interface ImportMetaEnv {
   readonly VITE_API_URL: string
+  readonly VITE_SUPABASE_URL: string
+  readonly VITE_SUPABASE_ANON_KEY: string
+  readonly VITE_PYTHON_SERVICE_URL: string
 }
 
 interface ImportMeta {
@@ -12,4 +15,3 @@ interface ImportMeta {
 }
 
 declare module '*.css'
-
