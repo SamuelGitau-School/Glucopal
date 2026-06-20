@@ -54,26 +54,27 @@
       <RouterView />
     </main>
 
-    <!-- Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-lg">
-      <div class="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-4 py-3">
-        <div class="flex justify-around items-center">
+<!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-lg pb-[env(safe-area-inset-bottom)]">
+      <div class="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-1 sm:px-4 py-2 sm:py-3">
+        <div class="flex items-center">
           <RouterLink
             v-for="item in navItems"
             :key="item.to"
             :to="item.to"
             custom
             v-slot="{ isActive, navigate: go }"
+            class="flex-1 min-w-0"
           >
             <button
               @click="go"
               :class="[
-                'flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors',
+                'flex flex-col items-center gap-0.5 sm:gap-1 px-1 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-colors w-full min-w-0',
                 isActive ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'
               ]"
             >
-              <component :is="item.icon" class="size-6" />
-              <span class="text-xs">{{ item.label }}</span>
+              <component :is="item.icon" class="size-5 sm:size-6 shrink-0" />
+              <span class="text-[10px] sm:text-xs truncate w-full text-center leading-tight">{{ item.label }}</span>
             </button>
           </RouterLink>
         </div>
