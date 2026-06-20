@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes.meals import router as meals_router
 from app.routes.chat import router as chat_router
 from app.routes.analytics import router as analytics_router
-
 from app.services.chat_service import lifespan_pool
+from app.routes.meal import router as meals_router
 
 app = FastAPI(
     title="Diabetes AI Service",

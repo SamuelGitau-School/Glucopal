@@ -13,7 +13,7 @@ const Setting = () => import('@/views/Setting.vue')
 const ChatView = () => import('@/views/Chat.vue')
 const BooksView = () => import('@/views/Books.vue')
 const TestingRecordsView = () => import('@/views/TestingRecords.vue')
-const MealsView = () => import('@/views/MealsView.vue')
+const MealsView = () => import('@/views/MealView.vue')
 declare module 'vue-router' {
   interface RouteMeta {
     requiresAuth?: boolean

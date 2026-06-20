@@ -124,8 +124,8 @@
               <PlusIcon class="size-5" />
               <span class="text-sm">Log Glucose</span>
             </button>
-            <button class="btn-primary h-auto py-4 flex flex-col gap-2 items-center">
-              <ActivityIcon class="size-5" />
+            <button @click="$router.push('/meals')"class="btn-primary h-auto py-4 flex flex-col gap-2 items-center">
+              <PlusIcon class="size-5" />
               <span class="text-sm">Log Meal</span>
             </button>
           </div>
