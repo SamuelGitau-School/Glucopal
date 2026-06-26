@@ -8,4 +8,3 @@ RUN mvn clean package -DskipTests -B
 RUN jar tf target/diabetes-backend-1.0.0.jar | grep application.properties
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "target/diabetes-backend-1.0.0.jar"]
-
