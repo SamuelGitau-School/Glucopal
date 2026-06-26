@@ -1,18 +1,23 @@
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\controller\AuthController.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\controller\GlucoseController.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\controller\UserController.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\DiabetesApplication.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\dto\GlucoseRecordDto.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\dto\UserDto.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\JwtFilter.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\JwtUtil.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\model\GlucoseRecord.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\model\User.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\OAuthSuccessHandler.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\repository\GlucoseRecordRepository.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\repository\UserRepository.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\SecurityConfig.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\service\AnalyticsService.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\service\ChatService.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\service\GlucoseService.java
-A:\Glucopal2.0 (2)\Glucopal2.0\Glucopal2\spring-backend\src\main\java\com\diabetesapp\service\UserService.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\JwtUtil.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\dto\UserDto.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\dto\MealDto.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\SecurityConfig.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\controller\AuthController.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\repository\MealRepository.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\controller\GlucoseController.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\model\User.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\service\AnalyticsService.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\model\Meal.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\service\GlucoseService.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\repository\UserRepository.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\dto\GlucoseRecordDto.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\service\ChatService.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\repository\GlucoseRecordRepository.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\controller\UserController.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\OAuthSuccessHandler.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\JwtFilter.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\controller\MealController.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\service\MealService.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\service\UserService.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\DiabetesApplication.java
+A:\Glucopal_School\Glucopal\spring-backend\src\main\java\com\diabetesapp\model\GlucoseRecord.java
