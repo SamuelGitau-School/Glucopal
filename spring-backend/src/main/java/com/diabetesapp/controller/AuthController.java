@@ -148,12 +148,10 @@ public class AuthController {
         if (refreshToken != null) {
             refreshTokenStore.remove(refreshToken);
         }
+        response.addHeader("Set-Cookie",
+        "refreshToken=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0");
 
-        Cookie cookie = new Cookie("refreshToken", "");
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
+
 
         return ResponseEntity.ok(Map.of("message", "Logged out"));
     }
@@ -161,14 +159,6 @@ public class AuthController {
     private String generateRefreshToken() {
         return UUID.randomUUID().toString().replace("-", "") +
                UUID.randomUUID().toString().replace("-", "");
-    }
-
-    private void setRefreshCookie(HttpServletResponse response, String token) {
-        Cookie cookie = new Cookie("refreshToken", token);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(7 * 24 * 60 * 60);
-        response.addCookie(cookie);
     }
 
     private String extractRefreshCookie(HttpServletRequest request) {
