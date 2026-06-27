@@ -161,6 +161,14 @@ public class AuthController {
                UUID.randomUUID().toString().replace("-", "");
     }
 
+    private void setRefreshCookie(HttpServletResponse response, String token) {
+    String cookieValue = String.format(
+        "refreshToken=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d",
+        token, 7 * 24 * 60 * 60
+    );
+    response.addHeader("Set-Cookie", cookieValue);
+}
+
     private String extractRefreshCookie(HttpServletRequest request) {
         if (request.getCookies() == null) return null;
         return Arrays.stream(request.getCookies())
