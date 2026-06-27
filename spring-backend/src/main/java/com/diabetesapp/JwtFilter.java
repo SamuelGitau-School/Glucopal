@@ -21,30 +21,39 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
+
     @Override
-    protected void doFilterInternal(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain chain)
-        throws ServletException, IOException {
+protected void doFilterInternal(
+    HttpServletRequest request,
+    HttpServletResponse response,
+    FilterChain chain)
+    throws ServletException, IOException {
 
-        String header = request.getHeader("Authorization");
-        System.out.println("JWT Filter - Method: " + request.getMethod() + " Path: " + request.getRequestURI() + " Auth: " + (header != null ? "present" : "missing"));
+    String header = request.getHeader("Authorization");
+    System.out.println("=== JWT FILTER ===");
+    System.out.println("Method: " + request.getMethod());
+    System.out.println("Path: " + request.getRequestURI());
+    System.out.println("Auth header: " + (header != null ? "present - " + header.substring(0, Math.min(20, header.length())) + "..." : "MISSING"));
 
-        if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
-            try {
-                Claims claims = jwtUtil.validateToken(token);
-                Long userId = Long.valueOf(claims.getSubject());
+    if (header != null && header.startsWith("Bearer ")) {
+        String token = header.substring(7);
+        try {
+            Claims claims = jwtUtil.validateToken(token);
+            Long userId = Long.valueOf(claims.getSubject());
+            System.out.println("Token valid - userId: " + userId);
+            System.out.println("Token expiry: " + claims.getExpiration());
 
-                UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(userId, null, List.of());
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            } catch (JwtException e) {
-                SecurityContextHolder.clearContext();
-            }
+            UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(userId, null, List.of());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        } catch (JwtException e) {
+            System.out.println("Token INVALID: " + e.getMessage());
+            SecurityContextHolder.clearContext();
         }
-
-        chain.doFilter(request, response);
+    } else {
+        System.out.println("No Bearer token found");
     }
+
+    chain.doFilter(request, response);
+}
 }
