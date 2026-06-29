@@ -44,6 +44,37 @@ public class SecurityConfig {
         return new CorsFilter(source);
     }
 
+<<<<<<< HEAD
+=======
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .cors(cors -> cors.configurationSource(request -> {
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowCredentials(true);
+                config.setAllowedOrigins(List.of(
+                    "http://localhost:5173",
+                    "http://localhost:3000",
+                    "https://glucopal-peach.vercel.app"
+                ));
+                config.setAllowedHeaders(List.of("*"));
+                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+                config.setExposedHeaders(List.of("Authorization"));
+                return config;
+            }))
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(s -> s
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/actuator/health").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+>>>>>>> dde3803963ad58378358a4fbf22270e8a538e59e
 
 private final OAuth2SuccessHandler oauth2SuccessHandler;
 
