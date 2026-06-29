@@ -24,7 +24,6 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
-
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
@@ -32,7 +31,8 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of(
             "http://localhost:5173",
             "http://localhost:3000",
-            "https://glucopal-peach.vercel.app"
+            "https://glucopal-peach.vercel.app",
+            "https://glucopal-green.vercel.app"
         ));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
@@ -44,37 +44,45 @@ public class SecurityConfig {
         return new CorsFilter(source);
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .cors(cors -> cors.configurationSource(request -> {
-                CorsConfiguration config = new CorsConfiguration();
-                config.setAllowCredentials(true);
-                config.setAllowedOrigins(List.of(
-                    "http://localhost:5173",
-                    "http://localhost:3000",
-                    "https://glucopal-peach.vercel.app"
-                ));
-                config.setAllowedHeaders(List.of("*"));
-                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-                config.setExposedHeaders(List.of("Authorization"));
-                return config;
-            }))
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(s -> s
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            .headers(headers -> headers.frameOptions(frame -> frame.disable()))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/auth/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+private final OAuth2SuccessHandler oauth2SuccessHandler;
 
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+        .cors(cors -> cors.configurationSource(request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowCredentials(true);
+            config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "https://glucopal-peach.vercel.app",
+                "https://glucopal-green.vercel.app"
+            ));
+            config.setAllowedHeaders(List.of("*"));
+            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+            config.setExposedHeaders(List.of("Authorization"));
+            return config;
+        }))
+        .csrf(AbstractHttpConfigurer::disable)
+        .sessionManagement(s -> s
+            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // needed for OAuth2 flow
+        )
+        .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers("/auth/**").permitAll()
+            .requestMatchers("/actuator/health").permitAll()
+            .requestMatchers("/login/oauth2/**", "/oauth2/**").permitAll()
+            .anyRequest().authenticated()
+        )
+        .oauth2Login(oauth -> oauth
+            .successHandler(oauth2SuccessHandler)
+        )
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+    return http.build();
+}
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
